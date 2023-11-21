@@ -6,11 +6,22 @@ import User from './Schema/User.js';
 import jwt from 'jsonwebtoken';
 import cors from 'cors';
 import admin from 'firebase-admin'
-import serviceAccountKey from './react-mern-mongodb-firebase-adminsdk-ckg8x-1ba22056d5.json' assert { type: "json" };
 import {getAuth} from "firebase-admin/auth";
 dotenv.config()
 
-
+const serviceAccountKey1 =  {
+    "type": process.env.type,
+    "project_id": process.env.project_id,
+    "private_key_id": process.env.private_key_id,
+    "private_key": process.env.private_key,
+    "client_email": process.env.client_email,
+    "client_id": process.env.client_id,
+    "auth_uri": process.env.auth_uri,
+    "token_uri": process.env.token_uri,
+    "auth_provider_x509_cert_url": process.env.auth_provider_x509_cert_url,
+    "client_x509_cert_url": process.env.client_x509_cert_url,
+    "universe_domain": process.env.universe_domain
+  }
 
 const server = express();
 
@@ -21,8 +32,9 @@ const corsOptions = {
   };
 server.use(cors(corsOptions));
 
+
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccountKey)
+    credential: admin.credential.cert(serviceAccountKey1)
 })
 
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
