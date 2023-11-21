@@ -1,11 +1,5 @@
 {
     "version" : 2,
-    "buids" : [
-        {
-            "src" : "server.js",
-            "use" : "@now/node"
-        }
-    ],
     "routes" : [
         {
             "src" : "/(.*)",
