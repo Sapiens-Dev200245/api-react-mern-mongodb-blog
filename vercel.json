@@ -1,8 +1,7 @@
 {
     "functions": {
       "api/*": {
-        "runtime": "vercel-node@16",
-        "handler": "server.js"
+        "runtime": "vercel-node@16"
       }
     }
 }
