@@ -46,6 +46,10 @@ const formatDatatoSend = (user) => {
     }
 }
 
+server.post('/' , (req,res) => {
+    res.send("this api is running...");
+})
+
 server.post('/signup' , async (req,res) => {
     try {
         const {fullname , email , password } = req.body;
