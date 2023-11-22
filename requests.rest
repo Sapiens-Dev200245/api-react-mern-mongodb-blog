@@ -1,8 +1,21 @@
-POST http://localhost:3000/signin 
+
+# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1N…IyM30.tCzjFfXTO5_85K6eho1GI2wRtYxvpfVIi_AZh7DWU_s', profile_img: 'https://api.dicebear.com/6.x/adventurer-neutral/svg?seed=Cleo
+
+POST http://localhost:3000/create-blog 
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NWNjY2QwZjdhY2JlMzA2ZGI2ZGRmNyIsImlhdCI6MTcwMDY3ODIyM30.tCzjFfXTO5_85K6eho1GI2wRtYxvpfVIi_AZh7DWU_s
+
+
 
 {
     "fullname" : "mmiiprpkr",
     "email": "mmiiprpkr123@something.com",
-    "password": "mmiiprpkr1M"
+    "password": "mmiiprpkr1M",
+    "title" : "mmiiprpkr-author",
+    "banner" : "https://example.com/imag",
+    "des" : "mmiiprpkr-desc",
+    "content" : {
+        "blocks":[1,2,3]
+    },
+    "tags" : ["mmii" , "prpkr"]
 }

@@ -7,6 +7,9 @@ import jwt from 'jsonwebtoken';
 import cors from 'cors';
 import admin from 'firebase-admin'
 import {getAuth} from "firebase-admin/auth";
+
+import blogRouter from './routes/blog.js'
+
 dotenv.config()
 
 const serviceAccountKey1 =  {
@@ -57,6 +60,8 @@ const formatDatatoSend = (user) => {
         fullname : user.personal_info.fullname
     }
 }
+
+server.use(blogRouter);
 
 server.post('/' , (req,res) => {
     res.send("this api is running...");
