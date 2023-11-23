@@ -7,7 +7,6 @@ import jwt from 'jsonwebtoken';
 import cors from 'cors';
 import admin from 'firebase-admin'
 import {getAuth} from "firebase-admin/auth";
-
 import blogRouter from './routes/blog.js'
 
 dotenv.config()
@@ -24,13 +23,13 @@ const serviceAccountKey1 =  {
     "auth_provider_x509_cert_url": process.env.auth_provider_x509_cert_url,
     "client_x509_cert_url": process.env.client_x509_cert_url,
     "universe_domain": process.env.universe_domain
-  }
+}
 
 const server = express();
 
 server.use(express.json());
 const corsOptions = {
-    origin: '*', // หรือ '*' ถ้าไม่ใช้ credentials
+    origin: '*', 
     credentials: true,
   };
 server.use(cors(corsOptions));
@@ -49,6 +48,7 @@ mongoose.connect(process.env.DB_LOCATION , {
 .then(() => console.log('connect success to mongodb'))
 .catch(() => console.log('connect fail'));
 
+//todo : fuction format data ที่ได้จากการ fetch ข้อมูลใน mongodb;
 const formatDatatoSend = (user) => {
 
     const access_token = jwt.sign({id : user._id } , process.env.SECRET_ACCESS_KEY )
@@ -61,12 +61,15 @@ const formatDatatoSend = (user) => {
     }
 }
 
+//todo : routes สำหรับ api blog.js
 server.use(blogRouter);
 
+//todo : test api
 server.post('/' , (req,res) => {
     res.send("this api is running...");
 })
 
+//todo : api สำหรับ signup
 server.post('/signup' , async (req,res) => {
     try {
         const {fullname , email , password } = req.body;
@@ -139,12 +142,11 @@ server.post('/signin' ,async (req,res) => {
     }
 })
 
+//todo : login ด้วย google
 server.post('/google-auth' , async (req, res) => {
     let {access_token } = req.body;
-
     try {
         const UserfromGoogleAuth = await getAuth().verifyIdToken(access_token);
-        // return res.json(UserfromGoogleAuth);
         const findEmail = await User.findOne({"personal_info.email" : UserfromGoogleAuth.email})
         if(findEmail){
             if(!findEmail.google_auth){
@@ -170,46 +172,6 @@ server.post('/google-auth' , async (req, res) => {
     } catch (error) {
         return res.json(error)
     }
-
-    // getAuth().verifyIdToken(access_token).then(async(decodeUser) => {
-    //     let { email , name , picture } = decodeUser; // true
-
-    //     picture = picture.replace("s96-3" , "s384-c");
-
-    //     let user = await User.findOne({"personal_info.email" : email}).select("personal_info.fullname personal_info.username personal_info.profile_img google_auth").then((u) => {
-    //         return u || null;
-    //     }).catch((err) => {
-    //         console.log(err);
-    //         return res.status(500).json({msg:err.message})
-    //     })
-
-    //     if(user){
-    //         return console.log("haha")
-    //         if(!user.google_auth){
-    //             return res.status(403).json({"error" : "This email was signed up with google , Please log in with password to access the account"})
-    //         }else{
-    //             return res.status(403).json({"error" : "this sjflsfjlsjfl"})
-    //             const username = email.split('@')[0];
-    //             user = new User({
-    //                 personal_info:{fullname : name , email, profile_img : picture , username } , 
-    //                 google_auth:true
-    //             })
-
-    //             await user.save().then((u) => {
-    //                 user = u;
-    //             })
-    //             .catch((err) => {
-    //                 return res.status(500).json("error" , err.message);
-    //             })
-    //         }
-
-    //         return res.status(200).json(formatDatatoSend(user));
-    //     }
-    // })
-    // .catch((err) => {
-    //     return res.status(500).json("error" , "Failed to authenticate with goodle , try with some other account");
-    // });
-
 })
 
 server.listen(3000 , () => {
