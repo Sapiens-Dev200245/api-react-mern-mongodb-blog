@@ -23,6 +23,20 @@ const verifyJWT = (req , res , next) => {
     })
 }
 
+router.post('/search-users' , (req,res) => {
+    let {query} = req.body;
+    User.find({"personal_info.username" : new RegExp(query , 'i')})
+    .limit(50)
+    .select("personal_info.fullname personal_info.username personal_info.profile_img -_id")
+    .then(user => {
+        return res.status(200).json(user)
+    })
+    .catch(err => {
+        console.log(err);
+        return res.status(500).json({error : err.message})
+    })
+})
+
 router.post('/create-blog', verifyJWT , async(req,res) => {
     try {
         let authorId = req.user;
@@ -75,7 +89,7 @@ router.post('/lastest-blog' , async(req , res) => {
         let maxLimit = 5
         const blogLastest = await Blog.find({draft : false })
         .populate("author","personal_info.profile_img personal_info.username personal_info.fullname -_id")
-        .sort({"publisheAt" : -1})
+        // .sort({"publisheAt" : -1})
         .select("blog_id title des banner activity tags publishedAt -_id")
         .skip((page - 1 ) * maxLimit)
         .limit(maxLimit)
@@ -85,7 +99,7 @@ router.post('/lastest-blog' , async(req , res) => {
     }
 })
 
-router.post('/all-latest-blogs-count' , async (req,res) => {
+router.post('/all-lastest-blogs-count' , async (req,res) => {
     try {
         const BlogCount = await Blog.countDocuments({draft:false})
         return res.status(200).json({totalDocs : BlogCount})
@@ -93,7 +107,24 @@ router.post('/all-latest-blogs-count' , async (req,res) => {
         console.log(error)
         return res.status(500).json({error : error.message});
     }
-    
+})
+
+
+router.post('/search-blogs-count' , async (req,res ) => {
+    try {
+        let { tag , query} = req.body;
+        let findQuery
+        if(tag){
+            findQuery = {tags : tag , draft: false };
+        }else if(query){
+            findQuery = {draft : false , title : new RegExp(query , 'i')}
+        }
+        const BlogCount = await Blog.countDocuments(findQuery)
+        return res.status(200).json({totalDocs : BlogCount})
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({error : error.message});
+    }
 })
 
 router.get('/trending-blog' , async(req , res ) => {
@@ -115,9 +146,14 @@ router.get('/trending-blog' , async(req , res ) => {
 
 router.post('/search-blogs', async (req , res ) => {
     try {
-        let { tag } = req.body;
-        let { page } = req.body;
-        let findQuery = {tags : tag , draft: false };
+        let { tag  , query , page} = req.body;
+        let findQuery
+        if(tag){
+            findQuery = {tags : tag , draft: false };
+        }else if(query){
+            findQuery = {draft : false , title : new RegExp(query , 'i')}
+        }
+
         let MaxLimit = 5;
         const searchBlogs = await Blog.find(findQuery)
         .populate("author","personal_info.profile_img personal_info.username personal_info.fullname -_id")
